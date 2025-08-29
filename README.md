@@ -1,36 +1,105 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 📊 پروژه نمایش داده‌های رمز ارز
 
-## Getting Started
+این پروژه یک برنامه‌ی **React + Next.js** است که اطلاعات رمز ارزها را از یک API می‌گیرد، آن‌ها را در **IndexedDB (با استفاده از Dexie.js)** ذخیره می‌کند و در یک جدول واکنش‌گرا نمایش می‌دهد.
 
-First, run the development server:
+مزایای پروژه:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+* 🚀 بارگذاری اولیه سریع از IndexedDB (کش سمت کلاینت)
+* 🔄 بروزرسانی خودکار داده‌ها هر ۳۰ ثانیه از API
+* 📑 صفحه‌بندی (Pagination) و انتخاب تعداد ردیف‌ها در جدول
+* 🎨 طراحی زیبا با استفاده از **Material UI**
+* 🗄 ذخیره‌سازی آفلاین در مرورگر با **Dexie.js**
+
+---
+
+## 📦 پیش‌نیازها
+
+* Node.js نسخه 18 یا بالاتر
+* npm یا yarn یا pnpm
+
+---
+
+## 🚀 نصب و اجرا
+
+1. کلون کردن پروژه:
+
+   ```bash
+   git clone https://github.com/your-username/crypto-table.git
+   cd crypto-table
+   ```
+
+2. نصب وابستگی‌ها:
+
+   ```bash
+   npm install
+   ```
+
+   یا
+
+   ```bash
+   yarn install
+   ```
+
+3. اجرای پروژه در حالت توسعه:
+
+   ```bash
+   npm run dev
+   ```
+
+   سپس در مرورگر آدرس زیر را باز کنید:
+   [http://localhost:3000](http://localhost:3000)
+
+---
+
+## 📂 ساختار پروژه
+
+```
+.
+├── components/
+│   └── DataTable.tsx       # جدول اصلی داده‌ها با MUI
+├── hooks/
+│   └── useCryptoData.ts    # هوک برای مدیریت داده‌ها (IndexedDB + API)
+├── pages/
+│   ├── api/
+│   │   └── coins.ts        # API داخلی برای دریافت داده‌ها
+│   └── index.tsx           # صفحه اصلی
+├── package.json
+└── README.md
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## ⚙️ نحوه کار
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. هنگام بارگذاری اولیه:
 
-## Learn More
+   * داده‌ها ابتدا از **IndexedDB** خوانده می‌شوند → نمایش سریع و بدون فلیکر
+2. سپس:
 
-To learn more about Next.js, take a look at the following resources:
+   * یک درخواست API ارسال می‌شود → داده‌ها در Dexie ذخیره می‌شوند → جدول بروزرسانی می‌شود
+3. هر ۳۰ ثانیه یک بار:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+   * داده‌ها از API خوانده شده و IndexedDB بروزرسانی می‌شود.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 📸 نمایی از جدول
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+* ستون‌ها شامل:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+  * Rank
+  * Name
+  * Symbol
+  * قیمت به USD
+  * قیمت به BTC
+  * تغییرات ۲۴ ساعته (با رنگ سبز/قرمز)
+
+---
+
+## 📝 لایسنس
+
+این پروژه تحت لایسنس MIT منتشر شده است.
+
+---
+
+می‌خوای این README رو **با اسکرین‌شات جدول و نمونه خروجی** هم برات تکمیل کنم تا توی گیت‌هابت جذاب‌تر باشه؟

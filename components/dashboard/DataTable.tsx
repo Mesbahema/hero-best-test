@@ -9,6 +9,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import TablePagination from '@mui/material/TablePagination';
 import { useCryptoData } from '@/hooks/useCryptoData';
+import { Skeleton } from '@mui/material';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -31,33 +32,11 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     },
 }));
 
-function createData(
-    name: string,
-    calories: number,
-    fat: number,
-    carbs: number,
-    protein: number,
-) {
-    return { name, calories, fat, carbs, protein };
-}
 
-const rows = [
-    createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-    createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-    createData('Eclair', 262, 16.0, 24, 6.0),
-    createData('Cupcake', 305, 3.7, 67, 4.3),
-    createData('Gingerbread', 356, 16.0, 49, 3.9),
-    createData('Gingerbread', 356, 16.0, 49, 3.9),
-    createData('Gingerbread', 356, 16.0, 49, 3.9),
-    createData('Gingerbread', 356, 16.0, 49, 3.9),
-    createData('Gingerbread', 356, 16.0, 49, 3.9),
-    createData('Gingerbread', 356, 16.0, 49, 3.9),
-    createData('Gingerbread', 356, 16.0, 49, 3.9),
-];
 
 export default function DataTable() {
     const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
     const handleChangePage = (event: unknown, newPage: number) => {
         setPage(newPage);
@@ -68,7 +47,7 @@ export default function DataTable() {
         setPage(0);
     };
 
-    const { coins, loading } = useCryptoData(1, 50);
+    const { coins, total, loading } = useCryptoData(page * rowsPerPage + 1, rowsPerPage);
 
     return (
         <TableContainer component={Paper}>
@@ -78,31 +57,54 @@ export default function DataTable() {
                         <StyledTableCell>Rank</StyledTableCell>
                         <StyledTableCell align="right">Name</StyledTableCell>
                         <StyledTableCell align="right">Symbol</StyledTableCell>
-                        <StyledTableCell align="right">Price</StyledTableCell>
+                        <StyledTableCell align="right">Price USD</StyledTableCell>
+                        <StyledTableCell align="right">Price BTC</StyledTableCell>
                         <StyledTableCell align="right">24h</StyledTableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {coins.map((row, id) => (
-                        <StyledTableRow key={id}>
-                            <StyledTableCell component="th" scope="row">
-                                {row.cmcRank}
-                            </StyledTableCell>
-                            <StyledTableCell align="right">{row.name}</StyledTableCell>
-                            <StyledTableCell align="right">{row.symbol}</StyledTableCell>
-                            <StyledTableCell align="right">${row.priceUsd && row.priceUsd.toFixed(2)}</StyledTableCell>
-                            <StyledTableCell sx={{
-                                fontWeight: 'bold',
-                                color: row.change24h && row.change24h > 0 ? 'success.main': 'error.main'
-                            }} align="right"> {row.change24h && row.change24h.toFixed(2)}%</StyledTableCell>
-                        </StyledTableRow>
-                    ))}
+                    {(loading || !coins.length) ?
+
+                        Array.from({ length: rowsPerPage }, (_, i) => (
+                            <StyledTableRow key={i}>
+                                <StyledTableCell component="th" scope="row">
+                                    <Skeleton animation="wave" />
+
+                                </StyledTableCell>
+                                <StyledTableCell align="right"><Skeleton animation="wave" />
+                                </StyledTableCell>
+                                <StyledTableCell align="right"><Skeleton animation="wave" />
+                                </StyledTableCell>
+                                <StyledTableCell align="right"><Skeleton animation="wave" />
+                                </StyledTableCell>
+                                <StyledTableCell align="right"><Skeleton animation="wave" />
+                                </StyledTableCell>
+                                <StyledTableCell align="right"> <Skeleton animation="wave" />
+                                </StyledTableCell>
+                            </StyledTableRow>
+                        ))
+
+                        : coins.map((row) => (
+                            <StyledTableRow key={row.symbol}>
+                                <StyledTableCell component="th" scope="row">
+                                    {row.cmcRank}
+                                </StyledTableCell>
+                                <StyledTableCell align="right">{row.name}</StyledTableCell>
+                                <StyledTableCell align="right">{row.symbol}</StyledTableCell>
+                                <StyledTableCell align="right">${row.priceUsd && row.priceUsd.toFixed(2)}</StyledTableCell>
+                                <StyledTableCell align="right">₿{row.priceBtc && row.priceBtc.toFixed(5)}</StyledTableCell>
+                                <StyledTableCell sx={{
+                                    fontWeight: 'bold',
+                                    color: row.change24h && row.change24h > 0 ? 'success.main' : 'error.main'
+                                }} align="right"> {row.change24h && row.change24h.toFixed(2)}%</StyledTableCell>
+                            </StyledTableRow>
+                        ))}
                 </TableBody>
             </Table>
             <TablePagination
-                rowsPerPageOptions={[5, 10, 25]}
+                rowsPerPageOptions={[10, 25, 50]}
                 component="div"
-                count={rows.length}
+                count={total}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={handleChangePage}

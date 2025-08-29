@@ -11,7 +11,10 @@ export async function GET(req: Request) {
 
     const response = await axios.get(url);
 
-    return NextResponse.json(response.data.data.cryptoCurrencyList);
+    return NextResponse.json({
+        cryptoCurrencyList: response.data.data.cryptoCurrencyList,
+        totalCount: response.data.data.totalCount
+    });
   } catch (error: any) {
     console.error("Error fetching coins:", error.message);
     return NextResponse.json({ error: "Failed to fetch coins" }, { status: 500 });

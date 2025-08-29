@@ -58,32 +58,60 @@ function mapCoin(c: any): Coin {
 
 export function useCryptoData(start = 1, limit = 10) {
     const [coins, setCoins] = useState<Coin[]>([]);
+    const [total, setTotal] = useState<number>(0);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        async function loadData() {
-            let stored = await db.coins.toArray();
-            if (stored.length > 0) {
-                setCoins(stored.slice(start - 1, start - 1 + limit));
-                setLoading(false);
-            }
+        let intervalId: NodeJS.Timeout;
 
+        async function loadFromDB() {
+            // ✅ Always read from Dexie first (fast + ordered)
+            const stored = await db.coins
+                .orderBy("cmcRank")
+                .offset(start - 1)
+                .limit(limit)
+                .toArray();
+
+            setCoins(stored);
+            setLoading(false);
+        }
+
+        async function fetchAndUpdate() {
             try {
-                const list = await fetchCoins(start, limit);
-                 const mapped = list.map(mapCoin);
-                if (list) {
+                const response = await fetchCoins(start, limit);
+                const mapped = response.cryptoCurrencyList.map(mapCoin);
+
+                if (response) {
+                    // ✅ store/refresh data in Dexie
                     await db.coins.bulkPut(mapped);
-                    setCoins(mapped);
+
+                    // ✅ refresh from Dexie again (not directly from API)
+                    const stored = await db.coins
+                        .orderBy("cmcRank")
+                        .offset(start - 1)
+                        .limit(limit)
+                        .toArray();
+
+                    setCoins(stored);
+                    setTotal(response.totalCount);
                 }
             } catch (err) {
                 console.error("API error:", err);
             }
-
-            setLoading(false);
         }
 
-        loadData();
+        // 1️⃣ Load cached data first
+        loadFromDB();
+
+        // 2️⃣ Fetch fresh data + update cache
+        fetchAndUpdate();
+
+        // 3️⃣ Refresh every 30s
+        intervalId = setInterval(fetchAndUpdate, 30000);
+
+        return () => clearInterval(intervalId);
     }, [start, limit]);
 
-    return { coins, loading };
+
+    return { coins, total, loading };
 }
