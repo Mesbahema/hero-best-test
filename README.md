@@ -24,8 +24,8 @@
 1. کلون کردن پروژه:
 
    ```bash
-   git clone https://github.com/your-username/crypto-table.git
-   cd crypto-table
+   git clone https://github.com/Mesbahema/hero-best-test.git
+   cd hero-best-test
    ```
 
 2. نصب وابستگی‌ها:
@@ -56,13 +56,14 @@
 ```
 .
 ├── components/
-│   └── DataTable.tsx       # جدول اصلی داده‌ها با MUI
+│   └── dashboard/       # جدول اصلی داده‌ها با MUI
+│       └── DataTable.tsx       # جدول اصلی داده‌ها با MUI
 ├── hooks/
 │   └── useCryptoData.ts    # هوک برای مدیریت داده‌ها (IndexedDB + API)
-├── pages/
+├── app/
 │   ├── api/
-│   │   └── coins.ts        # API داخلی برای دریافت داده‌ها
-│   └── index.tsx           # صفحه اصلی
+│   │   └── route.ts        # API داخلی برای دریافت داده‌ها
+│   └── page.tsx           # صفحه اصلی
 ├── package.json
 └── README.md
 ```
@@ -100,6 +101,3 @@
 
 این پروژه تحت لایسنس MIT منتشر شده است.
 
----
-
-می‌خوای این README رو **با اسکرین‌شات جدول و نمونه خروجی** هم برات تکمیل کنم تا توی گیت‌هابت جذاب‌تر باشه؟
